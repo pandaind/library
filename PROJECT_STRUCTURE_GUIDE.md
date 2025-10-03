@@ -1,20 +1,7 @@
 # Library Management System - Architecture & Learning Guide
 
 ## Overview
-
-This guide provides a compre├── book-service/                               # Book Management Microservice
-│   ├── Dockerfile               └── init-db/                         # Database Initialization              # Container configuration
-│   ├── pom.xml                                 # Maven dependencies
-│   └── src/main/
-│       ├── java/com/library/bookservice/
-│       │   ├── entity/                         # JPA entities (Book, BorrowRecord)
-│       │   ├── repository/                     # Spring Data repositories
-│       │   ├── service/                        # Business logic services
-│       │   ├── config/                         # Database & gRPC configuration
-│       │   ├── exception/                      # Domain-specific exceptions
-│       │   └── interceptor/                    # gRPC interceptors
-│       ├── proto/                              # gRPC service definitions
-│       └── resources/                          # Application properties & datadown of the Library Management System used for learning **GraphQL** and **gRPC** with **Spring Boot**. It covers the verified architecture, actual codebase organization, and key implementation patterns for educational purposes.
+Library Management System used for learning **GraphQL** and **gRPC** with **Spring Boot**. It covers the verified architecture, actual codebase organization, and key implementation patterns for educational purposes.
 
 ## System Architecture
 
