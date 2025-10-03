@@ -44,189 +44,51 @@ Library Management System used for learning **GraphQL** and **gRPC** with **Spri
 
 ```text
 library/
-├──  Documentation & Guides
-│   ├── README.md                                    # Main project overview
-│   ├── PROJECT_STRUCTURE_GUIDE.md                  # This architecture guide
-│   ├── POSTMAN_TESTING_GUIDE.md                   # API testing tutorial
-│   └── docker-README.md                           # Container deployment guide
-│
-├── Testing & Validation
-│   ├── Library-Management-System.postman_collection.json    # Complete API test suite
-│   ├── Library-Management-System.postman_environment.json   # Test environment config
-│   ├── quick-test.sh                              # Automated validation script
-│   ├── test-graphql.sh                           # GraphQL-specific tests
-│   └── test-n1-optimization.sh                   # Performance testing
-│
-├── Deployment & Configuration
-│   ├── docker-compose.yml                        # Multi-service orchestration
-│   ├── .dockerignore                            # Docker build exclusions
-│   ├── .gitignore                               # Git version control exclusions
-│   ├── LICENSE                                  # MIT license
-│   ├── pom.xml                                  # Root Maven configuration
-│   ├── start-services.sh                       # Service startup automation
-│   └── stop-services.sh                        # Service shutdown automation
-│
-├── api-gateway/                                 # GraphQL API Gateway Service
-│
-├──  Deployment & Configuration
-│   ├── docker-compose.yml                        # Multi-service orchestration
-│   ├── .dockerignore                            # Docker build exclusions
-│   ├── .gitignore                               # Git version control exclusions
-│   ├── LICENSE                                  # MIT license
-│   ├── pom.xml                                  # Root Maven configuration
-│   ├── start-services.sh                       # Service startup automation
-│   └── stop-services.sh                        # Service shutdown automation
-│
-├──  api-gateway/                               # GraphQL API Gateway Service
-│   ├── Dockerfile                               # Container build instructions
-│   ├── pom.xml                                  # Service-specific dependencies
-│   └── src/
-│       ├── main/
-│       │   ├── java/com/library/apigateway/
-│       │   │   ├── config/                      # Spring & GraphQL configuration
-│       │   │   ├── resolver/                    # GraphQL query/mutation resolvers  
-│       │   │   ├── dto/                         # Data transfer objects
-│       │   │   ├── mapper/                      # Entity-DTO mapping utilities
-│       │   │   ├── exception/                   # Custom exception handling
-│       │   │   ├── validation/                  # Input validation logic
-│       │   │   └── enums/                       # Enumeration types
-│       │   ├── proto/                           # Protocol buffer definitions
-│       │   └── resources/
-│       │       ├── graphql/                     # GraphQL schema files (.graphqls)
-│       │       ├── application.yml              # Default configuration
-│       │       └── application-docker.yml       # Docker environment config
-│       └── test/
-│           ├── java/com/library/apigateway/config/ # Configuration tests
-│           └── resources/graphql/               # Test GraphQL schemas
-│
-├──  book-service/                             # Book Management Microservice
-│   ├── Dockerfile                              # Container configuration
-│   ├── pom.xml                                 # Maven dependencies
-│   └── src/main/
-│       ├── java/com/library/bookservice/
-│       │   ├── entity/                         #  JPA entities (Book, BorrowRecord)
-│       │   ├── repository/                     #  Spring Data repositories
-│       │   ├── service/                        #  Business logic services
-│       │   ├── config/                         #  Database & gRPC configuration
-│       │   ├── exception/                      #  Domain-specific exceptions
-│       │   └── interceptor/                    #  gRPC interceptors
-│       ├── proto/                              #  gRPC service definitions
-│       └── resources/                          #  Application properties & data
-│
-├──  user-service/                            # User Management Microservice  
-│   ├── Dockerfile                             # Container setup
-│   ├── pom.xml                                # Service dependencies
-│   └── src/main/
-│       ├── java/com/library/userservice/
-│       │   ├── entity/                        #  User domain entities
-│       │   ├── repository/                    #  User data repositories
-│       │   ├── service/                       #  User business services
-│       │   ├── config/                        #  Service configuration
-│       │   ├── exception/                     #  User-specific exceptions
-│       │   ├── validation/                    #  User input validation
-│       │   └── interceptor/                   #  Request interceptors
-│       ├── proto/                             #  User service contracts
-│       └── resources/                         #  Configuration files
-│
-└──  init-db/                               # Database Initialization
-    └── init.sql                               #  PostgreSQL schema & sample data
-│
-├──  book-service/                  # Book Management Microservice
-│   ├──  Dockerfile
-│   ├──  pom.xml
-│   ├── 📂 src/main/
-│   │   ├── 📂 java/com/library/bookservice/
-│   │   │   ├── 📂 entity/           # JPA Entities
-│   │   │   │   ├── Book.java        # Book entity with relationships
-│   │   │   │   ├── BorrowRecord.java # Borrowing transaction entity
-│   │   │   │   └── Genre.java       # Book categorization
-│   │   │   ├── 📂 repository/       # Data Access Layer
-│   │   │   │   ├── BookRepository.java      # JPA repository
-│   │   │   │   ├── BorrowRecordRepository.java
-│   │   │   │   └── GenreRepository.java
-│   │   │   ├── 📂 service/          # Business Logic Layer
-│   │   │   │   ├── BookService.java         # Core book operations
-│   │   │   │   ├── BorrowService.java       # Borrowing logic
-│   │   │   │   └── InventoryService.java    # Stock management
-│   │   │   ├── 📂 grpc/            # gRPC Service Implementation
-│   │   │   │   └── BookGrpcService.java     # gRPC server
-│   │   │   ├── 📂 exception/       # Error Handling
-│   │   │   │   ├── BookNotFoundException.java
-│   │   │   │   └── InsufficientStockException.java
-│   │   │   ├── 📂 interceptor/     # gRPC Interceptors
-│   │   │   │   ├── LoggingInterceptor.java  # Request logging
-│   │   │   │   └── ValidationInterceptor.java # Input validation
-│   │   │   └── 📂 config/          # Configuration
-│   │   │       ├── DatabaseConfig.java      # JPA configuration
-│   │   │       └── GrpcServerConfig.java    # gRPC server setup
-│   │   ├── 📂 proto/               # Protocol Buffers
-│   │   │   └── book.proto          # Service contract definition
-│   │   └── 📂 resources/
-│   │       ├── data.sql            # Sample data initialization
-│   │       ├── application.yml     # Default configuration
-│   │       └── application-docker.yml # Docker environment
-│   └── 📂 target/                  # Build artifacts
-│
+├── Documentation
+│   ├── README.md                     # This file - project overview
+│   ├── PROJECT_STRUCTURE_GUIDE.md    # Detailed architecture guide
+│   └── POSTMAN_TESTING_GUIDE.md     # API testing instructions
+├── Testing & Automation
+│   ├── Library-Management-System.postman_collection.json  # API test collection
+│   ├── Library-Management-System.postman_environment.json # Test environment
+│   └── quick-test.sh                # Automated validation script
+├── Deployment Configuration
+│   ├── docker-compose.yml           # Service orchestration
+│   ├── .dockerignore               # Docker build optimization
+│   └── .gitignore                  # Git version control exclusions
+├── api-gateway/                     # GraphQL API Gateway Service
+│   ├── src/main/java/com/library/apigateway/
+│   │   ├── config/                 # GraphQL & gRPC client configuration
+│   │   ├── resolver/               # GraphQL query/mutation resolvers
+│   │   ├── dto/                    # Data transfer objects
+│   │   ├── mapper/                 # Entity-DTO mapping
+│   │   ├── exception/              # Custom exception handling
+│   │   └── validation/             # Input validation logic
+│   ├── src/main/proto/             # Protocol buffer definitions
+│   ├── src/main/resources/graphql/ # GraphQL schema files
+│   └── Dockerfile                  # Container build instructions
+├── book-service/                    # Book Management Microservice
+│   ├── src/main/java/com/library/bookservice/
+│   │   ├── entity/                 # JPA entities (Book, BorrowRecord)
+│   │   ├── repository/             # Data access repositories
+│   │   ├── service/                # Business logic services
+│   │   ├── config/                 # Database & gRPC configuration
+│   │   ├── exception/              # Domain-specific exceptions
+│   │   └── interceptor/            # gRPC interceptors
+│   ├── src/main/proto/             # gRPC service definitions
+│   └── src/main/resources/         # Application configuration
 ├── user-service/                    # User Management Microservice
-│   ├──  Dockerfile
-│   ├──  pom.xml
-│   ├── 📂 src/main/
-│   │   ├── 📂 java/com/library/userservice/
-│   │   │   ├── 📂 entity/          # User Domain Entities
-│   │   │   │   ├── User.java       # User entity with validations
-│   │   │   │   ├── MembershipType.java # Enum for membership levels
-│   │   │   │   └── UserStatus.java # Enum for user states
-│   │   │   ├── 📂 repository/      # Data Persistence
-│   │   │   │   └── UserRepository.java     # JPA repository with custom queries
-│   │   │   ├── 📂 service/         # Business Services
-│   │   │   │   ├── UserService.java        # Core user operations
-│   │   │   │   ├── AuthenticationService.java # User authentication
-│   │   │   │   └── MembershipService.java  # Membership management
-│   │   │   ├── 📂 grpc/           # gRPC Implementation
-│   │   │   │   └── UserGrpcService.java    # gRPC service endpoints
-│   │   │   ├── 📂 exception/      # Domain Exceptions
-│   │   │   │   ├── UserNotFoundException.java
-│   │   │   │   ├── DuplicateUserException.java
-│   │   │   │   └── InvalidMembershipException.java
-│   │   │   └── 📂 config/         # Service Configuration
-│   │   │       ├── DatabaseConfig.java
-│   │   │       └── GrpcServerConfig.java
-│   │   ├── 📂 proto/              # Protocol Buffer Schema
-│   │   │   └── user.proto         # User service contract
-│   │   └── 📂 resources/
-│   │       ├── data.sql           # Initial user data
-│   │       ├── application.yml
-│   │       └── application-docker.yml
-│   └── 📂 target/
-│
-├──  init-db/                      # Database Initialization
-│   └── init.sql                    # PostgreSQL schema and initial data
-│
-├──  Docker Configuration Files
-│   ├── docker-compose.yml          # Multi-service orchestration
-│   ├── .dockerignore               # Docker build exclusions
-│   └── docker-README.md            # Docker-specific documentation
-│
-├── Testing & Automation Scripts
-│   ├── start-services.sh           # Service startup automation
-│   ├── stop-services.sh            # Graceful service shutdown
-│   ├── test-graphql.sh             # Comprehensive API testing
-│   ├── test-n1-optimization.sh     # Performance testing
-│   └── quick-test.sh               # Quick validation script
-│
-├──  Testing Collections
-│   ├── Library-Management-System.postman_collection.json    # Newman/Postman tests
-│   └── Library-Management-System.postman_environment.json   # Test environment config
-│
-├──  Documentation
-│   ├── README.md                   # Main project documentation
-│   ├── POSTMAN_TESTING_GUIDE.md    # Testing instructions
-│   ├── COMPLETE_SUCCESS_REPORT.md  # Implementation report
-│   ├── CLEANUP_SUMMARY.md          # File organization summary
-│   └── PROJECT_STRUCTURE_GUIDE.md  # This file
-│
-├── Build Configuration
-│   └── pom.xml                     # Root Maven configuration
+│   ├── src/main/java/com/library/userservice/
+│   │   ├── entity/                 # User domain entities
+│   │   ├── repository/             # User data repositories
+│   │   ├── service/                # User business services
+│   │   ├── config/                 # Service configuration
+│   │   ├── exception/              # User-specific exceptions
+│   │   ├── validation/             # User input validation
+│   │   └── interceptor/            # Request interceptors
+│   └── src/main/proto/             # User service contracts
+└── init-db/                        # Database Initialization
+    └── init.sql                    # PostgreSQL schema & sample data
 ```
 
 ## Technology Stack Deep Dive
