@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.library.bookservice.grpc";
+option java_outer_classname = "BookProto";
+
+package book;
+
+// Book message definition
+message Book {
+    string id = 1;
+    string title = 2;
+    string author = 3;
+    string isbn = 4;
+    string publisher = 5;
+    int32 publication_year = 6;
+    string genre = 7;
+    int32 total_copies = 8;
+    int32 available_copies = 9;
+    string description = 10;
+    string language = 11;
+    int32 pages = 12;
+}
+
+// Request messages
+message BookRequest {
+    string book_id = 1;
+}
+
+message SearchRequest {
+    string query = 1;
+    string search_type = 2; // title, author, isbn, genre
+    int32 limit = 3;
+    int32 offset = 4;
+}
+
+message BorrowRequest {
+    string book_id = 1;
+    string user_id = 2;
+    int64 borrow_date = 3; // Unix timestamp
+    int64 due_date = 4; // Unix timestamp
+}
+
+message ReturnRequest {
+    string book_id = 1;
+    string user_id = 2;
+    int64 return_date = 3; // Unix timestamp
+}
+
+message GetBorrowersRequest {
+    string book_id = 1;
+}
+
+// Response messages
+message BookResponse {
+    bool success = 1;
+    string message = 2;
+    Book book = 3;
+}
+
+message BorrowResponse {
+    bool success = 1;
+    string message = 2;
+    string transaction_id = 3;
+    int64 due_date = 4;
+}
+
+message ReturnResponse {
+    bool success = 1;
+    string message = 2;
+    string transaction_id = 3;
+    int64 return_date = 4;
+    double fine_amount = 5;
+}
+
+message GetBorrowersResponse {
+    bool success = 1;
+    string message = 2;
+    repeated string user_ids = 3;
+}
+
+// BookService definition with gRPC methods
+service BookService {
+    // Get a single book by ID
+    rpc GetBook(BookRequest) returns (BookResponse);
+    
+    // Search for books with server streaming response
+    rpc SearchBooks(SearchRequest) returns (stream BookResponse);
+    
+    // Borrow a book
+    rpc BorrowBook(BorrowRequest) returns (BorrowResponse);
+    
+    // Return a book
+    rpc ReturnBook(ReturnRequest) returns (ReturnResponse);
+    
+    // Get users who have borrowed a book
+    rpc GetBorrowers(GetBorrowersRequest) returns (GetBorrowersResponse);
+}

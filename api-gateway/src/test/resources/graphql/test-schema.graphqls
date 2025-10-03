@@ -1,0 +1,99 @@
+# Test schema for integration tests - simplified version
+scalar DateTime
+scalar Long
+
+type Book {
+    id: ID!
+    title: String!
+    author: String!
+    isbn: String
+    genre: String
+    totalCopies: Int!
+    availableCopies: Int!
+    isAvailable: Boolean!
+    borrowedBy: [User!]!
+}
+
+type User {
+    id: ID!
+    username: String!
+    email: String!
+    firstName: String!
+    lastName: String!
+    fullName: String!
+    phone: String
+    address: String
+    membershipType: String!
+    status: String!
+    maxBooksAllowed: Int!
+    currentBorrowedBooks: Int!
+    outstandingFines: Float!
+    borrowedBookIds: [String!]!
+    canBorrowMore: Boolean!
+    hasFines: Boolean!
+    borrowedBooks: [Book!]!
+}
+
+type BookResponse {
+    success: Boolean!
+    message: String!
+    book: Book
+}
+
+type UserResponse {
+    success: Boolean!
+    message: String!
+    user: User
+}
+
+type BorrowResponse {
+    success: Boolean!
+    message: String!
+    transactionId: String
+    dueDate: DateTime
+    book: Book
+    user: User
+}
+
+type ReturnResponse {
+    success: Boolean!
+    message: String!
+    transactionId: String
+    returnDate: DateTime
+    fineAmount: Float!
+    book: Book
+    user: User
+}
+
+input UserInput {
+    username: String!
+    email: String!
+    firstName: String!
+    lastName: String!
+    phone: String
+    address: String
+    membershipType: String!
+}
+
+input BorrowBookInput {
+    bookId: ID!
+    userId: ID!
+    dueDate: DateTime
+}
+
+input ReturnBookInput {
+    bookId: ID!
+    userId: ID!
+    returnDate: DateTime
+}
+
+type Query {
+    book(id: ID!): BookResponse!
+    user(id: ID!): UserResponse!
+}
+
+type Mutation {
+    registerUser(input: UserInput!): UserResponse!
+    borrowBook(input: BorrowBookInput!): BorrowResponse!
+    returnBook(input: ReturnBookInput!): ReturnResponse!
+}

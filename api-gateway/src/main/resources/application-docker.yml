@@ -1,0 +1,41 @@
+server:
+  port: 8080
+
+spring:
+  graphql:
+    websocket:
+      path: /graphql
+    web:
+      path: /graphql
+      cors:
+        allowed-origins: "*"
+        allowed-methods: "*"
+        allowed-headers: "*"
+
+grpc:
+  client:
+    book-service:
+      address: static://book-service:9091
+      negotiationType: plaintext
+      max-inbound-message-size: 4MB
+      max-outbound-message-size: 4MB
+    user-service:
+      address: static://user-service:9093
+      negotiationType: plaintext
+      max-inbound-message-size: 4MB
+      max-outbound-message-size: 4MB
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.library.apigateway: INFO
+    org.springframework.graphql: DEBUG
+    graphql.execution: DEBUG

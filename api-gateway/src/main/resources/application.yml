@@ -1,0 +1,57 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  main:
+    web-application-type: servlet
+  graphql:
+    graphiql:
+      enabled: true
+      path: /graphiql
+    path: /graphql
+    cors:
+      allowed-origins: "*"
+      allowed-methods: "*"
+      allowed-headers: "*"
+    schema:
+      locations: "classpath:graphql/"
+      file-extensions: ".graphqls"
+  jackson:
+    default-property-inclusion: non_null
+
+# gRPC client configurations
+grpc:
+  client:
+    book-service:
+      address: "static://localhost:6565"
+      negotiationType: plaintext
+      keepAliveWithoutCalls: true
+      keepAliveTime: 30s
+      keepAliveTimeout: 5s
+      maxInboundMessageSize: 4MB
+      maxInboundMetadataSize: 8KB
+    user-service:
+      address: "static://localhost:6566"
+      negotiationType: plaintext
+      keepAliveWithoutCalls: true
+      keepAliveTime: 30s
+      keepAliveTimeout: 5s
+      maxInboundMessageSize: 4MB
+      maxInboundMetadataSize: 8KB
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.library.apigateway: DEBUG
+    net.devh.boot.grpc.client: DEBUG
+    graphql: DEBUG

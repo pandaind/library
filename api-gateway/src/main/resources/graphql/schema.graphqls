@@ -1,0 +1,227 @@
+# Custom scalar types
+scalar DateTime
+scalar Long
+
+# Validation directives
+directive @Size(min: Int = 0, max: Int = 2147483647, message: String = "Size must be between {min} and {max}") on ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+directive @NotBlank(message: String = "Must not be blank") on ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+directive @NotNull(message: String = "Must not be null") on ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+directive @Email(message: String = "Must be a valid email") on ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+directive @Pattern(regexp: String!, message: String = "Must match pattern") on ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+directive @Min(value: Int!, message: String = "Must be at least {value}") on ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+directive @Max(value: Int!, message: String = "Must be at most {value}") on ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+directive @Future(message: String = "Must be a future date") on ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+
+# Enums
+enum UserStatus {
+    ACTIVE
+    SUSPENDED
+    INACTIVE
+}
+
+enum MembershipType {
+    BASIC
+    PREMIUM
+    STUDENT
+}
+
+enum BorrowStatus {
+    BORROWED
+    RETURNED
+    OVERDUE
+}
+
+enum SearchType {
+    TITLE
+    AUTHOR
+    ISBN
+    GENRE
+    ALL
+}
+
+# Book type
+type Book {
+    id: ID!
+    title: String!
+    author: String!
+    isbn: String
+    publisher: String
+    publicationYear: Int
+    genre: String
+    totalCopies: Int!
+    availableCopies: Int!
+    description: String
+    language: String
+    pages: Int
+    isAvailable: Boolean!
+    borrowedBy: [User!]!
+}
+
+# User type
+type User {
+    id: ID!
+    username: String!
+    email: String!
+    firstName: String!
+    lastName: String!
+    fullName: String!
+    phone: String
+    address: String
+    registrationDate: DateTime!
+    status: UserStatus!
+    membershipType: MembershipType!
+    maxBooksAllowed: Int!
+    currentBorrowedBooks: Int!
+    outstandingFines: Float!
+    borrowedBookIds: [String!]!
+    canBorrowMore: Boolean!
+    hasFines: Boolean!
+    borrowedBooks: [Book!]!
+}
+
+# BorrowRecord type
+type BorrowRecord {
+    transactionId: ID!
+    bookId: String!
+    bookTitle: String!
+    borrowDate: DateTime!
+    dueDate: DateTime!
+    returnDate: DateTime
+    status: BorrowStatus!
+    fineAmount: Float!
+    isOverdue: Boolean!
+}
+
+# Response types
+type BookResponse {
+    success: Boolean!
+    message: String!
+    book: Book
+}
+
+type BooksResponse {
+    success: Boolean!
+    message: String!
+    books: [Book!]!
+    totalCount: Int!
+}
+
+type UserResponse {
+    success: Boolean!
+    message: String!
+    user: User
+}
+
+type BorrowHistoryResponse {
+    success: Boolean!
+    message: String!
+    history: [BorrowRecord!]!
+    totalCount: Int!
+}
+
+type BorrowResponse {
+    success: Boolean!
+    message: String!
+    transactionId: String
+    dueDate: DateTime
+    book: Book
+    user: User
+}
+
+type ReturnResponse {
+    success: Boolean!
+    message: String!
+    transactionId: String
+    returnDate: DateTime
+    fineAmount: Float!
+    book: Book
+    user: User
+}
+
+# Input types
+input UserInput {
+    username: String! @NotBlank(message: "Username is required") @Size(min: 3, max: 50, message: "Username must be between 3 and 50 characters") @Pattern(regexp: "^[a-zA-Z0-9_]+$", message: "Username can only contain letters, numbers, and underscores")
+    email: String! @NotBlank(message: "Email is required") @Email(message: "Email must be valid") @Size(max: 100, message: "Email must not exceed 100 characters")
+    firstName: String! @NotBlank(message: "First name is required") @Size(min: 1, max: 50, message: "First name must be between 1 and 50 characters") @Pattern(regexp: "^[a-zA-Z\\s]+$", message: "First name can only contain letters and spaces")
+    lastName: String! @NotBlank(message: "Last name is required") @Size(min: 1, max: 50, message: "Last name must be between 1 and 50 characters") @Pattern(regexp: "^[a-zA-Z\\s]+$", message: "Last name can only contain letters and spaces")
+    phone: String @Pattern(regexp: "^\\+?[1-9]\\d{1,14}$", message: "Phone number must be a valid international format") @Size(max: 20, message: "Phone number must not exceed 20 characters")
+    address: String @Size(max: 200, message: "Address must not exceed 200 characters")
+    membershipType: MembershipType! @NotNull(message: "Membership type is required")
+}
+
+input BookSearchInput {
+    query: String! @NotBlank(message: "Search query is required") @Size(min: 1, max: 100, message: "Search query must be between 1 and 100 characters")
+    searchType: SearchType = ALL @NotNull(message: "Search type is required")
+    limit: Int = 10 @Min(value: 1, message: "Limit must be at least 1") @Max(value: 100, message: "Limit must not exceed 100")
+    offset: Int = 0 @Min(value: 0, message: "Offset must be non-negative")
+}
+
+input BorrowBookInput {
+    bookId: ID! @NotBlank(message: "Book ID is required") @Pattern(regexp: "^[a-zA-Z0-9\\-]+$", message: "Book ID must contain only alphanumeric characters and hyphens")
+    userId: ID! @NotBlank(message: "User ID is required") @Pattern(regexp: "^[a-zA-Z0-9\\-]+$", message: "User ID must contain only alphanumeric characters and hyphens")
+    dueDate: DateTime @Future(message: "Due date must be in the future")
+}
+
+input ReturnBookInput {
+    bookId: ID!
+    userId: ID!
+    returnDate: DateTime
+}
+
+input BorrowHistoryInput {
+    userId: ID!
+    statusFilter: BorrowStatus
+    limit: Int = 10
+    offset: Int = 0
+}
+
+# Root Query type
+type Query {
+    # Test query
+    testQuery: String!
+    
+    # Book queries  
+    book(id: ID!): BookResponse!
+    books: BooksResponse!
+    searchBooks(input: BookSearchInput!): BooksResponse!
+    availableBooks(limit: Int = 10, offset: Int = 0): BooksResponse!
+    booksByGenre(genre: String!, limit: Int = 10, offset: Int = 0): BooksResponse!
+    booksByAuthor(author: String!, limit: Int = 10, offset: Int = 0): BooksResponse!
+    
+    # User queries
+    user(id: ID!): UserResponse!
+    users: [User!]!
+    userByEmail(email: String!): UserResponse!
+    userByUsername(username: String!): UserResponse!
+    activeUsers: [User!]!
+    usersWithFines: [User!]!
+    
+    # Borrow history queries
+    borrowHistory(input: BorrowHistoryInput!): BorrowHistoryResponse!
+    userBorrowHistory(userId: ID!, limit: Int = 10, offset: Int = 0): BorrowHistoryResponse!
+    overdueBooks: BorrowHistoryResponse!
+    
+    # Statistics queries
+    totalBooks: Int!
+    totalAvailableBooks: Int!
+    totalUsers: Int!
+    totalActiveUsers: Int!
+    bookGenres: [String!]!
+}
+
+# Root Mutation type
+type Mutation {
+    # User mutations
+    registerUser(input: UserInput!): UserResponse!
+    updateUser(id: ID!, input: UserInput!): UserResponse!
+    suspendUser(id: ID!): UserResponse!
+    activateUser(id: ID!): UserResponse!
+    
+    # Book mutations
+    borrowBook(input: BorrowBookInput!): BorrowResponse!
+    returnBook(input: ReturnBookInput!): ReturnResponse!
+    
+    # Fine mutations
+    payFine(userId: ID!, amount: Float!): UserResponse!
+}
+

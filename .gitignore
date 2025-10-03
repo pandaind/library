@@ -1,0 +1,58 @@
+# Java Build Artifacts
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.classpath
+.project
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Docker
+.dockerignore
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Test Reports
+surefire-reports/
+test-output/
+
+# Generated Sources
+generated-sources/
+generated-test-sources/
+
+# Temporary Files
+*.tmp
+*.temp
+*~
+
+# Coverage Reports
+coverage/
+*.exec
+*.gcno
+*.gcda
